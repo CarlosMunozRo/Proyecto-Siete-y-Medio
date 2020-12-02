@@ -8,6 +8,7 @@ jugadores={}
 import time
 import random
 
+
 flag_menu0=False
 flag_menu1=False
 flag_manual=False
@@ -20,6 +21,16 @@ def sum_mazo():
         for h in jugadores[i]['mano']:
             suma_mazo+=h[2]
         jugadores[i]['puntos mano']=suma_mazo
+
+
+def clear():
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+
+        # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
 
 
 while not flag_menu1:
@@ -50,13 +61,12 @@ if mod_juego=="Manual":
         jugadores[nombre]['puntos mano']=0
         jugadores[nombre]['puntos apostados']=0
         jugadores[nombre]['puntos restantes']=20
-
+    clear()
     print("Repartiendo las Cartas",end="")
-    for i in range(5):
+    for i in range(3):
         time.sleep(0.5)
         print(".",end="")
     print()
-
 
     # Primera repartida de Cartas
     for i in jugadores.keys():
@@ -98,21 +108,6 @@ if mod_juego=="Manual":
         mazo.remove(carta_robada)
         sum_mazo()
 
-    jugadores_ord=[]
-
-    for i,j in jugadores.items():
-        jugadores_ord.append((i,j['puntos mano']))
-
-    count = 0
-    for i in range(len(jugadores_ord) - 1):
-        for j in range(len(jugadores_ord) - i - 1):
-            if jugadores_ord[j][1] > jugadores_ord[j + 1][1]:
-                a = jugadores_ord[j]
-                b = jugadores_ord[j + 1]
-                jugadores_ord[j] = b
-                jugadores_ord[j + 1] = a
-    jugadores_ord=jugadores_ord[::-1]
-
     for i in range(1,len(jugadores_ord)):
         i=jugadores_ord[i][0]
         print("Turno del Jugador:",i)
@@ -131,11 +126,25 @@ if mod_juego=="Manual":
                 opt_apuesta=input("Realiza una apuesta o plantarse? a / p   ")
 
                 if opt_apuesta=="a":
-                    apuesta=float(input("Cuanto quieres apostar: "))
-                    jugadores[i]['puntos apostados']=apuesta
-                    jugadores[i]['puntos restantes'] = jugadores[i]['puntos restantes']-apuesta
-                    if jugadores[i]['puntos restantes']<=0:
-                        jugadores[i]['estado partida'] ="eliminado"
+                    apuesta = float(input("Cuanto quieres apostar: "))
+                    jugadores[i]['puntos apostados'] = apuesta
+                    jugadores[i]['puntos restantes'] = jugadores[i]['puntos restantes'] - apuesta
+                    if jugadores[i]['puntos restantes'] <= 0:
+                        jugadores[i]['estado partida'] = "eliminado"
+                    carta_robada = random.choice(mazo)
+                    jugadores[i]['mano'].append(carta_robada)
+                    mazo.remove(carta_robada)
+                    sum_mazo()
+                    if jugadores[i]['puntos mano'] > 7.5 and banca != jugadores[i]:
+                        jugadores[i]['estado mano'] = "eliminado"
+                        jugadores[banca]['puntos restantes'] += jugadores[i]['puntos apostados']
+                    if jugadores[i]['puntos restantes'] >= 0:
+                        jugadores[i]['estado partida'] = "eliminado"
+                        print(i,"esta eliminado de la partida")
+                        for r in jugadores_ord:
+                            if i in r:
+                                jugadores_ord.remove(r)
+                                print(jugadores_ord)
                     break
                 elif opt_apuesta=="p":
                     jugadores[i]['estado partida'] = "plantado"
@@ -163,11 +172,25 @@ if mod_juego=="Manual":
             opt_apuesta=input("Realiza una apuesta o plantarse? a / p   ")
 
             if opt_apuesta=="a":
-                apuesta=float(input("Cuanto quieres apostar: "))
-                jugadores[i]['puntos apostados']=apuesta
-                jugadores[i]['puntos restantes'] = jugadores[i]['puntos restantes']-apuesta
-                if jugadores[i]['puntos restantes']<=0:
-                    jugadores[i]['estado partida'] ="eliminado"
+                apuesta = float(input("Cuanto quieres apostar: "))
+                jugadores[i]['puntos apostados'] = apuesta
+                jugadores[i]['puntos restantes'] = jugadores[i]['puntos restantes'] - apuesta
+                if jugadores[i]['puntos restantes'] <= 0:
+                    jugadores[i]['estado partida'] = "eliminado"
+                carta_robada = random.choice(mazo)
+                jugadores[i]['mano'].append(carta_robada)
+                mazo.remove(carta_robada)
+                sum_mazo()
+                if jugadores[i]['puntos mano'] > 7.5 and banca != jugadores[i]:
+                    jugadores[i]['estado mano'] = "eliminado"
+                    jugadores[banca]['puntos restantes'] += jugadores[i]['puntos apostados']
+                if jugadores[i]['puntos restantes'] >= 0:
+                    jugadores[i]['estado partida'] = "eliminado"
+                    print(i, "esta eliminado de la partida")
+                    for r in jugadores_ord:
+                        if jugadores[i] in r:
+                            jugadores_ord.remove(r)
+                            print(jugadores_ord)
                 break
             elif opt_apuesta=="p":
                 jugadores[i]['estado partida'] = "plantado"
