@@ -136,7 +136,7 @@ if mod_juego=="Manual":
                                 carta_robada = random.choice(mazo)
                                 jugadores[i]['mano'].append(carta_robada)
                                 mazo.remove(carta_robada)
-                                print("La carta que has robado es: ", carta_robada)
+                                print("La carta que has robado es: ", carta_robada[0], "de", carta_robada[1])
                                 sum_mazo()
 
                             if jugadores[i]['puntos mano'] > 7.5 and banca != jugadores[i]:  # Si el jugador tiene mas de 7.5 puntos, el estado de la mano pasa a eliminado
@@ -160,7 +160,7 @@ if mod_juego=="Manual":
                         print("Puntos de",h,":",jugadores[h]['puntos restantes'])
 
                     while True: # Hasta que no ponga a o b se repatira el bucle
-                        opt_apuesta=input("Plantarse o Robar? s / r   ")
+                        opt_apuesta=input("Plantarse o Robar? p / r   ")
 
 
                         if opt_apuesta=="s":  # Si decide plantarse
@@ -170,7 +170,7 @@ if mod_juego=="Manual":
                             carta_robada = random.choice(mazo)
                             jugadores[i]['mano'].append(carta_robada)
                             mazo.remove(carta_robada)
-                            print("La carta que has robado es: ",carta_robada)
+                            print("La carta que has robado es: ",carta_robada[0],"de",carta_robada[1])
                             sum_mazo()
                         else:
                             print("Opcion incorrecra")
