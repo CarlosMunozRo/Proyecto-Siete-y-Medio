@@ -42,16 +42,20 @@ if mod_juego=="Manual":
     if num_jugadores>=2 and num_jugadores<=8:
 
         for i in range(num_jugadores):  # Crea el diccionario de jugadores
-            nombre=input("Nombre del jugador "+str(i+1)+": ")
-
-            jugadores[nombre]={}
-            jugadores[nombre]['mano']=[]
-            jugadores[nombre]['estado mano']="jugando"
-            jugadores[nombre]['estado partida']="jugando"
-            jugadores[nombre]['prioridad del jugador']=0
-            jugadores[nombre]['puntos mano']=0
-            jugadores[nombre]['puntos apostados']=0
-            jugadores[nombre]['puntos restantes']=20
+            while True:
+                nombre=input("Nombre del jugador "+str(i+1)+": ")
+                if not nombre.isalnum() or not nombre[0].isalpha() or ' ' in nombre:  # Comprueba si el nombre es aceptable
+                    print("Nombre no permitido")
+                else:
+                    jugadores[nombre]={}
+                    jugadores[nombre]['mano']=[]
+                    jugadores[nombre]['estado mano']="jugando"
+                    jugadores[nombre]['estado partida']="jugando"
+                    jugadores[nombre]['prioridad del jugador']=0
+                    jugadores[nombre]['puntos mano']=0
+                    jugadores[nombre]['puntos apostados']=0
+                    jugadores[nombre]['puntos restantes']=20
+                    break
 
         print("")
         print("Repartiendo las Cartas",end="")
@@ -159,14 +163,14 @@ if mod_juego=="Manual":
                         print()
                         print("Puntos de",h,":",jugadores[h]['puntos restantes'])
 
-                    while True: # Hasta que no ponga a o b se repatira el bucle
+                    while True: # Hasta que no ponga p o r se repatira el bucle
                         opt_apuesta=input("Plantarse o Robar? p / r   ")
 
 
                         if opt_apuesta=="s":  # Si decide plantarse
                             jugadores[i]['estado partida'] = "plantado"
                             break
-                        elif opt_apuesta=="r":
+                        elif opt_apuesta=="r":  # Si decide robar
                             carta_robada = random.choice(mazo)
                             jugadores[i]['mano'].append(carta_robada)
                             mazo.remove(carta_robada)
@@ -175,12 +179,10 @@ if mod_juego=="Manual":
                         else:
                             print("Opcion incorrecra")
 
-            if jugadores[i]['puntos restantes']==20*len(jugadores.keys()):
+            if jugadores[i]['puntos restantes']==20*len(jugadores.keys()):  # Condicion de ganada no acabada
                 print("Ganador", jugadores[i])
     else:
         print("Esoje entre 2-8 jugadores.")
-
-
 
 #elif mod_juego=="Maquina":
 
