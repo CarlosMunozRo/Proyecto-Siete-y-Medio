@@ -21,6 +21,14 @@ def sum_mazo():  # Suma los puntos de el mazo de los jugadores
             suma_mazo+=h[2]
         jugadores[i]['puntos mano']=suma_mazo
 
+def robar_carta(i):
+    opt_robar = input("Quieres robar una carta: s / n   ")
+    if opt_robar == "s":  # Si decide Robar
+        carta_robada = random.choice(mazo)
+        jugadores[i]['mano'].append(carta_robada)
+        mazo.remove(carta_robada)
+        print("La carta que has robado es: ", carta_robada[0], "de", carta_robada[1])
+        sum_mazo()
 
 while not flag_menu1:
     opt_menu1=int(input("\n1. Juego Manual\n2. Contra La Maquina\n3. Salir\n\nEscoje una opcion: "))
@@ -103,6 +111,7 @@ if mod_juego=="Manual":
     jugadores_ord.append(aux)
 
     while True:  # Empieza la partida /// Falta Cambiar la condicion para que acabe cuando gane alguien
+
             for i in jugadores_ord:
                 i = i[0]
                 print("")
@@ -116,9 +125,9 @@ if mod_juego=="Manual":
                         print("Cartas de", h, ":",end="")
                         for g in jugadores[h]['mano']:  # Printa las cartas de la mano del jugador
                             print(g[0],"de",g[1], end=" ")
-                        print()
+                        print("")
                         print("Puntos de",h,":",jugadores[h]['puntos restantes'])
-                        print()
+                        print("")
 
                     while True: # Hasta que no ponga a o b se repatira el bucle
                         opt_apuesta=input("Realiza una apuesta o plantarse? a / p   ")  # Pregunta si apostar o plantarse
@@ -127,46 +136,43 @@ if mod_juego=="Manual":
                             apuesta = float(input("Cuanto quieres apostar: "))
                             jugadores[i]['puntos apostados'] = apuesta
                             jugadores[i]['puntos restantes'] = jugadores[i]['puntos restantes'] - apuesta
-                            if jugadores[i]['puntos restantes'] <= 0:  # Si el jugador tiene menos o 0 puntos, su estado de partida pasa a eliminado
-                                jugadores[i]['estado partida'] = "eliminado"
-                                print(i,"esta eliminado de la partida")
-                                for r in jugadores_ord: # Elimina el jugador de la lista para que no tenga turno
-                                    if i in r:
-                                        jugadores_ord.remove(r)
-                                        print(jugadores_ord)
-                            else:  # Si no esta eliminado puede robar
-                                opt_robar=input("Quieres robar una carta: s / n   ")
-                                if opt_robar=="s":  # Si decide Robar
-                                    carta_robada = random.choice(mazo)
-                                    jugadores[i]['mano'].append(carta_robada)
-                                    mazo.remove(carta_robada)
-                                    print("La carta que has robado es: ", carta_robada[0], "de", carta_robada[1])
-                                    sum_mazo()
 
                             if jugadores[i]['puntos mano'] > 7.5 and banca != jugadores[i]:  # Si el jugador tiene mas de 7.5 puntos, el estado de la mano pasa a eliminado
                                 jugadores[i]['estado mano'] = "eliminado"
                                 jugadores[banca]['puntos restantes'] += jugadores[i]['puntos apostados']
-
+                            robar_carta(i)
                             break
                         elif opt_apuesta=="p":  # Si decide plantarse
                             jugadores[i]['estado partida'] = "plantado"
+                            robar_carta(i)
                             break
+
                         else:
                             print("Opcion incorrecra")
+
+                        if jugadores[i]['puntos restantes'] <= 0:  # Si el jugador tiene menos o 0 puntos, su estado de partida pasa a eliminado
+                            jugadores[i]['estado partida'] = "eliminado"
+                            print(i, "esta eliminado de la partida")
+                            for r in jugadores_ord:  # Elimina el jugador de la lista para que no tenga turno
+                                if i in r:
+                                    jugadores_ord.remove(r)
+                                    print(jugadores_ord)
+
+
                 else:
                     # Turno de la Banca
                     for h,l in jugadores.items():  # Printa las cartas y los puntos de cada uno de los jugadores
                         print("Cartas de", h, ":",end="")
-                        print("Puntos mano de",h,jugadores[i]['puntos mano'])
                         for g in jugadores[h]['mano']:
                             print(g[0],"de",g[1], end=" ")
                         print()
                         print("Puntos de",h,":",jugadores[h]['puntos restantes'])
+                        print()
 
                     while True: # Hasta que no ponga p o r se repatira el bucle
                         opt_apuesta=input("Plantarse o Robar? p / r   ")
 
-                        if opt_apuesta=="s":  # Si decide plantarse
+                        if opt_apuesta=="p":  # Si decide plantarse
                             jugadores[i]['estado partida'] = "plantado"
                             break
                         elif opt_apuesta=="r":  # Si decide robar
