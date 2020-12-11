@@ -52,7 +52,13 @@ if mod_juego=="Manual":
 
         for i in range(num_jugadores):  # Crea el diccionario de jugadores
             while True:
-                nombre = input("Nombre del jugador " + str(i + 1) + ": ")
+                while True:
+                    try:
+                        nombre = input("Nombre del jugador " + str(i + 1) + ": ")
+                    except:
+                        print("Entrada invalida")
+                    else:
+                        break
                 if not nombre.isalnum() or not nombre[
                     0].isalpha() or ' ' in nombre:  # Comprueba si el nombre es aceptable
                     print("Nombre no permitido")
@@ -155,8 +161,13 @@ if mod_juego=="Manual":
                 print("Apuesta entre", min,"/", max)
 
                 while True:
-
-                    apuesta=int(input("Apuesta: "))
+                    while True:
+                        try:
+                            apuesta=int(input("Apuesta: "))
+                        except:
+                            print("Tiene que ser un numero")
+                        else:
+                            break
 
                     if apuesta<min or apuesta>max:
                         print("Apuesta incorrecta.")
@@ -166,7 +177,14 @@ if mod_juego=="Manual":
                         break
 
                 while True:
-                    opt_plantarse=int(input("\n1) Segir\n2) Pararse\nEscoje la opcion: "))
+
+                    while True:
+                        try:
+                            opt_plantarse=int(input("\n1) Segir\n2) Pararse\nEscoje la opcion: "))
+                        except:
+                            print("Tiene que ser un numero.")
+                        else:
+                            break
 
                     if opt_plantarse==1:
 
@@ -199,7 +217,13 @@ if mod_juego=="Manual":
                     while True:
 
                         print()
-                        opt_plantarse = int(input("\n1) Segir\n2) Pararse\nEscoje la opcion: "))
+                        while True:
+                            try:
+                                opt_plantarse = int(input("\n1) Segir\n2) Pararse\nEscoje la opcion: "))
+                            except:
+                                print("Tiene que ser un numero.")
+                            else:
+
 
                         if opt_plantarse == 1:
 
