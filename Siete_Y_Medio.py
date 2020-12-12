@@ -173,7 +173,7 @@ if mod_juego=="Manual":
                         print("Apuesta incorrecta.")
                     else:
                         jugadores[i]['puntos apostados']=apuesta
-                        jugadores[i]['puntos restantes']-=apuesta
+
                         break
 
                 while True:
@@ -193,6 +193,10 @@ if mod_juego=="Manual":
                         mazo.remove(carta_robada)
                         sum_mazo()
                         print("Tienes",jugadores[i]['mano'][0][2],"de",jugadores[i]['mano'][0][1],"y",jugadores[i]['puntos mano'],"puntos del mazo")
+                        if jugadores[i]['puntos mano'] > 7.5:
+                            print("Te has pasado.")
+                            break
+
 
                     elif opt_plantarse==2:
 
@@ -223,7 +227,7 @@ if mod_juego=="Manual":
                             except:
                                 print("Tiene que ser un numero.")
                             else:
-
+                                break
 
                         if opt_plantarse == 1:
 
@@ -232,7 +236,9 @@ if mod_juego=="Manual":
                             mazo.remove(carta_robada)
                             sum_mazo()
                             print("Tienes", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y",jugadores[i]['puntos mano'], "puntos del mazo")
-
+                            if jugadores[i]['puntos mano']>7.5:
+                                print("Te has pasado.")
+                                break
 
                         elif opt_plantarse == 2:
 
@@ -271,7 +277,7 @@ if mod_juego=="Manual":
                 jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*2
                 print(i,"a ganado:",jugadores[i]['puntos apostados']*2,"puntos, ahora tiene:",jugadores[i]['puntos restantes'])
 
-        if not sieteymedio:  # Nadie a sacado 7.5
+        if not sieteymedio and num_jugadores>2:  # Nadie a sacado 7.5
             suma=0
             flag_mas_cercano=False
             sum_mazo()
@@ -309,17 +315,20 @@ if mod_juego=="Manual":
         if jugadores[jugadores_ord[-1][0]]['estado mano']=="plantado":
             for i in jugadores_ord[:-1]:  # Quien a perdido contra la Banca
                 i = i[0]
-                if jugadores[jugadores_ord[-1][0]]['puntos mano']<jugadores[i]['puntos mano']:  # Si la banca pierde
+                if jugadores[jugadores_ord[-1][0]]['puntos mano']<jugadores[i]['puntos mano'] and jugadores[i]['estado mano']=="plantado":  # Si la banca pierde
 
                     if jugadores[i]['puntos mano']==7.5:  # Si saca 7.5
-                        jugadores[jugadores_ord[-1][0]]['puntos restantes']-=jugadores[i]['puntos apostados']
-                        jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*2
-                        print("la banca (",jugadores_ord[-1][0],") pierde",jugadores[i]['puntos apostados'],"y",i,"gana",jugadores[i]['puntos apostados']*2)
-                    else:  # Si no saca 7.5
 
                         jugadores[jugadores_ord[-1][0]]['puntos restantes']-=jugadores[i]['puntos apostados']*2
                         jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*3
                         print("la banca (",jugadores_ord[-1][0],") pierde",jugadores[i]['puntos apostados']*2,"y",i,"gana",jugadores[i]['puntos apostados']*3)
+                    else:  # Si no saca 7.5
+
+                        jugadores[jugadores_ord[-1][0]]['puntos restantes']-=jugadores[i]['puntos apostados']
+                        jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*2
+                        print("la banca (",jugadores_ord[-1][0],") pierde",jugadores[i]['puntos apostados'],"y",i,"gana",jugadores[i]['puntos apostados']*2)
+
+
 
                 else:
                     jugadores[jugadores_ord[-1][0]]['puntos restantes']+=jugadores[i]['puntos apostados']
@@ -363,8 +372,3 @@ if mod_juego=="Manual":
 
         print("El Ganador es",i)
 
-        '''
-        if jugadores[i]['puntos mano'] > 7.5:
-            jugadores[i]['estado mano'] == "eliminado"
-        if jugadores[i]['estado mano'] == "jugando":
-        '''
