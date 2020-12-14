@@ -1,14 +1,72 @@
-mazo=[(1,"oros",1),(2,"oros",2),(3,"oros",3),(4,"oros",4),(5,"oros",5),(6,"oros",6),(7,"oros",7),(10,"oros",0.5),(11,"oros",0.5),(12,"oros",0.5),
-      (1,"bastos",1),(2,"bastos",2),(3,"bastos",3),(4,"bastos",4),(5,"bastos",5),(6,"bastos",6),(7,"bastos",7),(10,"bastos",0.5),(11,"bastos",0.5),(12,"bastos",0.5),
-      (1,"espadas",1),(2,"espadas",2),(3,"espadas",3),(4,"espadas",4),(5,"espadas",5),(6,"espadas",6),(7,"espadas",7),(10,"espadas",0.5),(11,"espadas",0.5),(12,"espadas",0.5),
-      (1,"copas",1),(2,"copas",2),(3,"copas",3),(4,"copas",4),(5,"copas",5),(6,"copas",6),(7,"copas",7),(10,"copas",0.5),(11,"copas",0.5),(12,"copas",0.5)]
-
 
 import random
+import xml.etree.ElementTree as et
 
 flag_menu1=False
+flag_ganador=False
+
+mazo=[]
+mazo_backup=[]
 
 jugadores={}
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+tree=et.parse('Basic_Config_Game.xml')
+root=tree.getroot()
+count_normas=1
+min_players=0
+max_players=0
+max_rounds=0
+initial_points=0
+allow_auto=""
+for child in root:
+    if count_normas==1:
+        min_players=child.text
+    elif count_normas==2:
+        max_players=child.text
+    elif count_normas==3:
+        max_rounds=child.text
+    elif count_normas==4:
+        initial_points=child.text
+    elif count_normas==5:
+        allow_auto=child.text
+    count_normas+=1
+
+min_players=int(min_players)
+max_players=int(max_players)
+max_rounds=int(max_rounds)
+initial_points=int(initial_points)
+
+def sacar_mazo():
+    global mazo
+    global mazo_backup
+    tree = et.parse('Cartas.xml')
+    root = tree.getroot()
+    for child in root:
+        if child[4].text == "SI":
+            mazo.append((int(child[1].text), child[2].text, float(child[3].text)))
+
+    mazo_backup=mazo
+
+sacar_mazo()
+
+def reset_mazo():
+    global mazo
+    global mazo_backup
+    mazo =[]
+    for cartas in mazo_backup:
+        mazo.append(cartas)
+
 
 def sum_mazo():  # Suma los puntos de el mazo de los jugadores
     global jugadores
@@ -18,6 +76,75 @@ def sum_mazo():  # Suma los puntos de el mazo de los jugadores
             suma_mazo+=h[2]
         jugadores[i]['puntos mano']=suma_mazo
 
+def robar_ia(i):
+    global jugadores
+    global mazo
+    sum_mazo()
+    cartas_restantes=len(mazo)
+    cartas_pasa_siete=0
+    print("\tTe toco", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y", jugadores[i]['puntos mano'],"puntos del mazo")
+    while True:
+        for cartas in mazo:
+            if jugadores[i]['puntos mano']+cartas[2]<7.5:
+                cartas_pasa_siete+=1
+        probabilidad_pasarse=(cartas_pasa_siete/cartas_restantes)*100  # Probabilidad de no pasarse
+
+        if probabilidad_pasarse>65 and jugadores[i]['estado mano']=="jugando":  # Si la probabilidad de no pasarnos es mayor de un 65% pediremos carta con total seguridad.
+            carta_robada = random.choice(mazo)
+            jugadores[i]['mano'].insert(0, carta_robada)
+            mazo.remove(carta_robada)
+            sum_mazo()
+            print("\tTe toco", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y", jugadores[i]['puntos mano'],
+                  "puntos del mazo")
+            if jugadores[i]['puntos mano'] > 7.5:
+                print(f"{bcolors.FAIL}Te has pasado.{bcolors.ENDC}")
+                jugadores[i]['estado mano'] = "plantado"
+                break
+
+        elif probabilidad_pasarse<65 and probabilidad_pasarse>50:  # Si está entre un 50 y un 65%, esta será la probabilidad con la que pediremos carta.
+
+            random_robar=random.randint(1,100)
+
+            if random_robar<probabilidad_pasarse:
+                carta_robada = random.choice(mazo)
+                jugadores[i]['mano'].insert(0, carta_robada)
+                mazo.remove(carta_robada)
+                sum_mazo()
+                print("\tTe toco", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y",
+                      jugadores[i]['puntos mano'],
+                      "puntos del mazo")
+                if jugadores[i]['puntos mano'] > 7.5:
+                    print("Te has pasado.")
+                    jugadores[i]['estado mano'] = "plantado"
+                    break
+            else:
+                break
+
+        elif probabilidad_pasarse<50:  # Si es menor de un 50%, dividiremos esta probabilidad entre 3, y como resultado nos dará la probabilidad con la que pediremos carta.
+
+            probabilidad_pasarse=probabilidad_pasarse/3
+
+            random_robar = random.randint(1, 100)
+
+            if random_robar < probabilidad_pasarse:
+                carta_robada = random.choice(mazo)
+                jugadores[i]['mano'].insert(0, carta_robada)
+                mazo.remove(carta_robada)
+                sum_mazo()
+                print("\tTe toco", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y",jugadores[i]['puntos mano'],"puntos del mazo")
+                if jugadores[i]['puntos mano'] > 7.5:
+                    print("Te has pasado.")
+                    jugadores[i]['estado mano'] = "plantado"
+                    break
+            else:
+                break
+
+def apostar_ia(min,max):
+    random_apostar=random.randint(min,max)
+    jugadores[i]['puntos apostados']=random_apostar
+    jugadores[i]['puntos restantes']-=random_apostar
+    print(f"{bcolors.UNDERLINE}{i}{bcolors.ENDC} a apostado: {bcolors.OKBLUE}{random_apostar}{bcolors.ENDC}")
+    print()
 
 while not flag_menu1:
     while True:
@@ -33,22 +160,52 @@ while not flag_menu1:
         flag_menu1=True
     elif opt_menu1==2:
         mod_juego="Maquina"
+        flag_menu1=True
     elif opt_menu1==3:
+        mod_juego=""
         flag_menu1=True
     else:
         print("Opcion incorrecta")
 
-if mod_juego=="Manual":
-    while True:
-        try:
-            num_jugadores = int(input("Cuantos Jugadores van a Jugar: "))
-        except:
-            print("Tiene que ser un numero")
-        else:
-            break
+if mod_juego=="Manual" or mod_juego=="Maquina":
 
+    if mod_juego=="Manual":
+        while True:
+            try:
+                num_jugadores = int(input("Cuantos Jugadores van a Jugar 2/8: "))
+            except:
+                print("Tiene que ser un numero")
+            else:
+                break
+    else:
+        while True:
+            try:
+                num_jugadores = int(input("Cuantos Jugadores van a Jugar 2/8: "))
 
-    if num_jugadores >= 2 and num_jugadores <= 8:
+                while True:
+                    while True:
+                        try:
+                            num_ia= int(input("Cuantas jugadores son maquinas  (min 1): "))
+                        except:
+                            print("Tiene que ser un numero.")
+                        else:
+                            break
+
+                    if num_ia + num_jugadores > max_players:
+                        print("Demasiada IA")
+                    elif num_ia == 0:
+                        print("Tiene que haber minimo 1 ia.")
+                    elif num_ia>num_jugadores:
+                        print("No puede haber mas ia que total de jugadores.")
+                    else:
+                        break
+
+            except:
+                print("Tiene que ser un numero")
+            else:
+                break
+
+    if num_jugadores >= min_players and num_jugadores <= max_players and mod_juego=="Manual": # Modo Manual
 
         for i in range(num_jugadores):  # Crea el diccionario de jugadores
             while True:
@@ -59,8 +216,7 @@ if mod_juego=="Manual":
                         print("Entrada invalida")
                     else:
                         break
-                if not nombre.isalnum() or not nombre[
-                    0].isalpha() or ' ' in nombre:  # Comprueba si el nombre es aceptable
+                if not nombre.isalnum() or not nombre[0].isalpha() or ' ' in nombre:  # Comprueba si el nombre es aceptable
                     print("Nombre no permitido")
                 else:
                     jugadores[nombre] = {}
@@ -70,9 +226,57 @@ if mod_juego=="Manual":
                     jugadores[nombre]['prioridad del jugador'] = 0
                     jugadores[nombre]['puntos mano'] = 0
                     jugadores[nombre]['puntos apostados'] = 0
-                    jugadores[nombre]['puntos restantes'] = 20
+                    jugadores[nombre]['puntos restantes'] = initial_points
+                    jugadores[nombre]['ia']=0  # Si 0 es jugador, 1 si es ia
                     break
 
+    if num_jugadores >= min_players and num_jugadores <= max_players and mod_juego=="Maquina": # Modo Maquina
+
+        for i in range(num_jugadores-num_ia):  # Crea el diccionario de jugadores
+            while True:
+                while True:
+                    try:
+                        nombre = input("Nombre del jugador " + str(i + 1) + ": ")
+                    except:
+                        print("Entrada invalida")
+                    else:
+                        break
+                if not nombre.isalnum() or not nombre[0].isalpha() or ' ' in nombre:  # Comprueba si el nombre es aceptable
+                    print("Nombre no permitido")
+                else:
+                    jugadores[nombre] = {}
+                    jugadores[nombre]['mano'] = []
+                    jugadores[nombre]['estado mano'] = "jugando"
+                    jugadores[nombre]['estado partida'] = "jugando"
+                    jugadores[nombre]['prioridad del jugador'] = 0
+                    jugadores[nombre]['puntos mano'] = 0
+                    jugadores[nombre]['puntos apostados'] = 0
+                    jugadores[nombre]['puntos restantes'] = initial_points
+                    jugadores[nombre]['ia']=0  # Si 0 es jugador, 1 si es ia
+                    break
+
+        for i in range(num_ia):  # Crea el diccionario de jugadores
+            while True:
+                while True:
+                    try:
+                        nombre = input("Nombre de la maquina " + str(i + 1) + ": ")
+                    except:
+                        print("Entrada invalida")
+                    else:
+                        break
+                if not nombre.isalnum() or not nombre[0].isalpha() or ' ' in nombre:  # Comprueba si el nombre es aceptable
+                    print("Nombre no permitido")
+                else:
+                    jugadores[nombre] = {}
+                    jugadores[nombre]['mano'] = []
+                    jugadores[nombre]['estado mano'] = "jugando"
+                    jugadores[nombre]['estado partida'] = "jugando"
+                    jugadores[nombre]['prioridad del jugador'] = 0
+                    jugadores[nombre]['puntos mano'] = 0
+                    jugadores[nombre]['puntos apostados'] = 0
+                    jugadores[nombre]['puntos restantes'] = initial_points
+                    jugadores[nombre]['ia']=1  # Si 0 es jugador, 1 si es ia
+                    break
 
     for i in jugadores.keys():
         carta_robada = random.choice(mazo)
@@ -111,19 +315,10 @@ if mod_juego=="Manual":
     jugadores_ord.append(aux)
 
 
-    contador_mano=0
-    while contador_mano<=30:
-        mazo = [(1, "oros", 1), (2, "oros", 2), (3, "oros", 3), (4, "oros", 4), (5, "oros", 5), (6, "oros", 6),
-                (7, "oros", 7), (10, "oros", 0.5), (11, "oros", 0.5), (12, "oros", 0.5),
-                (1, "bastos", 1), (2, "bastos", 2), (3, "bastos", 3), (4, "bastos", 4), (5, "bastos", 5),
-                (6, "bastos", 6), (7, "bastos", 7), (10, "bastos", 0.5), (11, "bastos", 0.5), (12, "bastos", 0.5),
-                (1, "espadas", 1), (2, "espadas", 2), (3, "espadas", 3), (4, "espadas", 4), (5, "espadas", 5),
-                (6, "espadas", 6), (7, "espadas", 7), (10, "espadas", 0.5), (11, "espadas", 0.5), (12, "espadas", 0.5),
-                (1, "copas", 1), (2, "copas", 2), (3, "copas", 3), (4, "copas", 4), (5, "copas", 5), (6, "copas", 6),
-                (7, "copas", 7), (10, "copas", 0.5), (11, "copas", 0.5), (12, "copas", 0.5)]
-
-        for i in jugadores_ord:
-            i=i[0]
+    contador_mano=1
+    while contador_mano<=max_rounds and flag_ganador==False:
+        reset_mazo()
+        for i in jugadores.keys():
             jugadores[i]['mano']=[]
             jugadores[i]['puntos mano'] = 0
             jugadores[i]['estado mano'] = "jugando"
@@ -150,104 +345,111 @@ if mod_juego=="Manual":
                 max = 12
 
             i=i[0]
-            print("El turno es de:",i)
+            print(f"El turno es de: {bcolors.UNDERLINE}{bcolors.BOLD}{i}{bcolors.ENDC}")
 
             if jugadores[i]['prioridad del jugador']!=0: #  Si no es la vanca
-                #Turno de jugador
-                sum_mazo()
+                if jugadores[i]['ia']==0:
+                    #Turno de jugador
+                    sum_mazo()
 
-                print("Tienes",jugadores[i]['mano'][0][2],"de",jugadores[i]['mano'][0][1],"y",jugadores[i]['puntos mano'],"puntos del mazo")
+                    print("\tTe toco",jugadores[i]['mano'][0][2],"de",jugadores[i]['mano'][0][1],"y",jugadores[i]['puntos mano'],"puntos del mazo")
 
-                print("Apuesta entre", min,"/", max)
-
-                while True:
-                    while True:
-                        try:
-                            apuesta=int(input("Apuesta: "))
-                        except:
-                            print("Tiene que ser un numero")
-                        else:
-                            break
-
-                    if apuesta<min or apuesta>max:
-                        print("Apuesta incorrecta.")
-                    else:
-                        jugadores[i]['puntos apostados']=apuesta
-
-                        break
-
-                while True:
+                    print("Apuesta entre", min,"/", max)
 
                     while True:
-                        try:
-                            opt_plantarse=int(input("\n1) Segir\n2) Pararse\nEscoje la opcion: "))
-                        except:
-                            print("Tiene que ser un numero.")
-                        else:
-                            break
-
-                    if opt_plantarse==1:
-
-                        carta_robada = random.choice(mazo)
-                        jugadores[i]['mano'].insert(0,carta_robada)
-                        mazo.remove(carta_robada)
-                        sum_mazo()
-                        print("Tienes",jugadores[i]['mano'][0][2],"de",jugadores[i]['mano'][0][1],"y",jugadores[i]['puntos mano'],"puntos del mazo")
-                        if jugadores[i]['puntos mano'] > 7.5:
-                            print("Te has pasado.")
-                            break
-
-
-                    elif opt_plantarse==2:
-
-                        jugadores[i]['estado mano']="plantado"
-                        print()
-                        break
-                    else:
-                        print("Opcion incorrecta.")
-            else:
-                # Turno de la Banca
-                print("Turno Banca")
-
-                contador_no_se_paso=0
-                for j in jugadores_ord:
-                    j=j[0]
-                    if jugadores[j]['puntos mano']<=7.5:
-                        contador_no_se_paso+=1
-
-                if contador_no_se_paso>0:
-                    # Si queda alguien que no se haya pasado
-                    print("Tienes", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y",jugadores[i]['puntos mano'], "puntos del mazo")
-                    while True:
-
-                        print()
                         while True:
                             try:
-                                opt_plantarse = int(input("\n1) Segir\n2) Pararse\nEscoje la opcion: "))
+                                apuesta=int(input("Apuesta: "))
+                            except:
+                                print("Tiene que ser un numero")
+                            else:
+                                break
+
+                        if apuesta<min or apuesta>max:
+                            print("Apuesta incorrecta.")
+                        else:
+                            jugadores[i]['puntos apostados']=apuesta
+                            jugadores[i]['puntos restantes']-=apuesta
+                            break
+
+                    while True:
+
+                        while True:
+                            try:
+                                opt_plantarse=int(input("\n1) Seguir\n2) Pararse\nEscoje la opcion: "))
                             except:
                                 print("Tiene que ser un numero.")
                             else:
                                 break
 
-                        if opt_plantarse == 1:
+                        if opt_plantarse==1:
 
                             carta_robada = random.choice(mazo)
-                            jugadores[i]['mano'].insert(0, carta_robada)
+                            jugadores[i]['mano'].insert(0,carta_robada)
                             mazo.remove(carta_robada)
                             sum_mazo()
-                            print("Tienes", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y",jugadores[i]['puntos mano'], "puntos del mazo")
-                            if jugadores[i]['puntos mano']>7.5:
-                                print("Te has pasado.")
+                            print("\tTe toco",jugadores[i]['mano'][0][2],"de",jugadores[i]['mano'][0][1],"y",jugadores[i]['puntos mano'],"puntos del mazo")
+                            if jugadores[i]['puntos mano'] > 7.5:
+                                print(f"{bcolors.FAIL}Te has pasado.{bcolors.ENDC}")
                                 break
 
-                        elif opt_plantarse == 2:
 
-                            jugadores[i]['estado mano'] = "plantado"
+                        elif opt_plantarse==2:
+
+                            jugadores[i]['estado mano']="plantado"
                             print()
                             break
                         else:
                             print("Opcion incorrecta.")
 
+                else:
+                    # Turno Jugador IA
+                    apostar_ia(min,max)
+                    robar_ia(i)
+
+            else:
+                if jugadores[i]['ia']==0:
+                    # Turno de la Banca Humano
+                    print("Turno Banca")
+                    contador_no_se_paso=0
+                    for j in jugadores_ord:
+                        j=j[0]
+                        if jugadores[j]['puntos mano']<=7.5:
+                            contador_no_se_paso+=1
+                    if contador_no_se_paso>0:
+                        # Si queda alguien que no se haya pasado
+                        print("\tTe toco", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y",jugadores[i]['puntos mano'], "puntos del mazo")
+                        while True:
+                            print()
+                            while True:
+                                try:
+                                    opt_plantarse = int(input("\n1) Seguir\n2) Pararse\nEscoje la opcion: "))
+                                except:
+                                    print("Tiene que ser un numero.")
+                                else:
+                                    break
+                            if opt_plantarse == 1:
+                                carta_robada = random.choice(mazo)
+                                jugadores[i]['mano'].insert(0, carta_robada)
+                                mazo.remove(carta_robada)
+                                sum_mazo()
+                                print("\tTe toco", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y",jugadores[i]['puntos mano'], "puntos del mazo")
+                                if jugadores[i]['puntos mano']>7.5:
+                                    print(f"{bcolors.FAIL}Te has pasado.{bcolors.ENDC}")
+                                    break
+                            elif opt_plantarse == 2:
+                                jugadores[i]['estado mano'] = "plantado"
+                                print()
+                                break
+                            else:
+                                print("Opcion incorrecta.")
+                else:
+                    robar_ia(i)
+
+
+        print("")
+        print(f"{bcolors.WARNING}Resultados ronda:{bcolors.ENDC}", contador_mano-1)
+        print("")
         for i in jugadores_ord:  # Condiciones de ser eliminado
             i=i[0]
             if jugadores[i]['puntos restantes']<=0:
@@ -255,12 +457,11 @@ if mod_juego=="Manual":
                 for j in jugadores_ord:
                     if i in j:
                         jugadores_ord.remove(j)
-                print(i,"queda eliminado por falta de puntos.")
+                print(f"{bcolors.FAIL}{bcolors.BOLD}{bcolors.UNDERLINE}{i}{bcolors.ENDC}{bcolors.FAIL}{bcolors.BOLD} queda eliminado por falta de puntos.{bcolors.ENDC}{bcolors.ENDC}")
             else:
                 if jugadores[i]['puntos mano']>7.5:
                     jugadores[i]['estado mano']="eliminado"
                     jugadores[i]['puntos mano']=0
-
 
 
         if jugadores[jugadores_ord[-1][0]]['puntos mano']>7.5:  # Si se pasa, paga a todos los plantados
@@ -274,21 +475,23 @@ if mod_juego=="Manual":
             i=i[0]
             if jugadores[i]['puntos mano']==7.5:  # Alguien a sacado 7.5
                 sieteymedio=True
-                jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*2
-                print(i,"a ganado:",jugadores[i]['puntos apostados']*2,"puntos, ahora tiene:",jugadores[i]['puntos restantes'])
+                jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*3
+                if jugadores[jugadores_ord[-1]]['puntos restantes']<jugadores[i]['puntos apostados']*2:
+                    jugadores[i]['puntos restantes']+=jugadores[jugadores_ord[-1]]['puntos restantes']
+                else:
+                    jugadores[jugadores_ord[-1]]['puntos restantes']-=jugadores[i]['puntos apostados']*2
+                print(i,"a ganado:",jugadores[i]['puntos apostados']*3,"puntos, ahora tiene:",jugadores[i]['puntos restantes'])
 
         if not sieteymedio and num_jugadores>2:  # Nadie a sacado 7.5
             suma=0
             flag_mas_cercano=False
-            sum_mazo()
             for i in jugadores_ord[:-1]:
                 i=i[0]
-
-                if jugadores[i]['puntos mano']>suma and jugadores[i]['estado mano']=="plantado":
+                sum_mazo()
+                if jugadores[i]['puntos mano']>suma:
                     mas_cercano_siete_y_medio=i
                     suma=jugadores[i]['puntos mano']
                     flag_mas_cercano=True
-
 
             jugadores[mas_cercano_siete_y_medio]['puntos restantes']+=1
 
@@ -312,28 +515,24 @@ if mod_juego=="Manual":
                 sieteymedio_comprobacion=True
                 jugador_a_banca=aux
 
-        if jugadores[jugadores_ord[-1][0]]['estado mano']=="plantado":
-            for i in jugadores_ord[:-1]:  # Quien a perdido contra la Banca
-                i = i[0]
-                if jugadores[jugadores_ord[-1][0]]['puntos mano']<jugadores[i]['puntos mano'] and jugadores[i]['estado mano']=="plantado":  # Si la banca pierde
+        for i in jugadores_ord[:-1]:  # Quien a perdido contra la Banca
+            i = i[0]
+            if jugadores[jugadores_ord[-1][0]]['puntos mano']<jugadores[i]['puntos mano'] and jugadores[i]['estado mano']=="plantado":  # Si la banca pierde
 
-                    if jugadores[i]['puntos mano']==7.5:  # Si saca 7.5
+                if jugadores[i]['puntos mano']==7.5:  # Si saca 7.5
 
-                        jugadores[jugadores_ord[-1][0]]['puntos restantes']-=jugadores[i]['puntos apostados']*2
-                        jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*3
-                        print("la banca (",jugadores_ord[-1][0],") pierde",jugadores[i]['puntos apostados']*2,"y",i,"gana",jugadores[i]['puntos apostados']*3)
-                    else:  # Si no saca 7.5
+                    jugadores[jugadores_ord[-1][0]]['puntos restantes']-=jugadores[i]['puntos apostados']*2
+                    jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*3
+                    print("la banca (",jugadores_ord[-1][0],") pierde",jugadores[i]['puntos apostados']*2,"y",i,"gana",jugadores[i]['puntos apostados']*3)
+                else:  # Si no saca 7.5
 
-                        jugadores[jugadores_ord[-1][0]]['puntos restantes']-=jugadores[i]['puntos apostados']
-                        jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*2
-                        print("la banca (",jugadores_ord[-1][0],") pierde",jugadores[i]['puntos apostados'],"y",i,"gana",jugadores[i]['puntos apostados']*2)
+                    jugadores[jugadores_ord[-1][0]]['puntos restantes']-=jugadores[i]['puntos apostados']
+                    jugadores[i]['puntos restantes']+=jugadores[i]['puntos apostados']*2
+                    print("la banca (",jugadores_ord[-1][0],") pierde",jugadores[i]['puntos apostados'],"y",i,"gana",jugadores[i]['puntos apostados']*2)
 
-
-
-                else:
-                    jugadores[jugadores_ord[-1][0]]['puntos restantes']+=jugadores[i]['puntos apostados']
-                    print(i,"a pagado",jugadores[i]['puntos apostados'],"a la banca (",jugadores_ord[-1][0],")")
-
+            else:
+                jugadores[jugadores_ord[-1][0]]['puntos restantes']+=jugadores[i]['puntos apostados']
+                print(i,"a pagado",jugadores[i]['puntos apostados'],"a la banca (",jugadores_ord[-1][0],")")
 
         if jugadores[jugadores_ord[-1][0]]['puntos mano']!=7.5 and sieteymedio_comprobacion:
             # [(carlos,4),(nil,7.5),(marti,6),(aida,7)]
@@ -341,27 +540,18 @@ if mod_juego=="Manual":
             jugadores_ord.append(jugador_a_banca)
 
         count_elim=0
-        jugadores_elim=[]
-        for i in jugadores_ord:
-            i=i[0]
+        for i in jugadores.keys():
             if jugadores[i]['estado partida']=="eliminado":
                 count_elim+=1
-                jugadores_elim.append(i)
-
-
 
         if count_elim==num_jugadores-1:
-            for i in jugadores_elim:
-                for j in jugadores.keys():
-                    if i==j:
-                        print("El Ganador es",j)
+            for j in jugadores.keys():
+                if jugadores[j]['estado partida']!="eliminado":
+                    print("El Ganador es",j)
+                    flag_ganador=True
+                    contador_mano==31
 
-
-
-
-
-
-    if contador_mano==30:
+    if contador_mano==31 and not flag_ganador:
         suma=0
         for i in jugadores_ord:
             i=i[0]
@@ -372,3 +562,7 @@ if mod_juego=="Manual":
 
         print("El Ganador es",i)
 
+'''
+for i in jugadores.keys():
+    print(jugadores[i]['puntos restantes'])
+'''
