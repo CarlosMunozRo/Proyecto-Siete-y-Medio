@@ -1,7 +1,7 @@
 
 import random
 import xml.etree.ElementTree as et
-from xml.dom import minidom
+import pymysql
 
 flag_menu1=False
 flag_ganador=False
@@ -151,7 +151,7 @@ def apostar_ia(min,max):
 while not flag_menu1:
     while True:
         try:
-            opt_menu1=int(input("\n1. Juego Manual\n2. Contra La Maquina\n3. Salir\n\nEscoje una opcion: "))
+            opt_menu1=int(input("\n1. Juego Manual\n2. Contra La Maquina\n3. Querys\n4. Salir\n\nEscoje una opcion: "))
         except:
             print("Tiene que ser un numero")
         else:
@@ -164,6 +164,9 @@ while not flag_menu1:
         mod_juego="Maquina"
         flag_menu1=True
     elif opt_menu1==3:
+        mod_juego="Querys"
+        flag_menu1=True
+    elif opt_menu1==4:
         mod_juego=""
         flag_menu1=True
     else:
@@ -584,6 +587,92 @@ if mod_juego=="Manual" or mod_juego=="Maquina":
                 ganador=i
 
         print("El Ganador es",i)
+
+elif mod_juego=="Querys":
+    conexion = "aws-carlos-basededatos.ccaui2eoe11e.us-east-1.rds.amazonaws.com"  # aquí pondremos nuestra dirección de la base de datos de Amazon web services
+    usuario = "admin"  # usuario de la conexión
+    password = "Alumne1234"  # contraseña
+    BBDD = "proyecto"  # base de datos a la cual nos vamos a conectar
+    db = pymysql.connect(conexion, usuario, password, BBDD)
+
+    query_sql = [
+        "WITH MyRowSet AS (select idparticipante,carta_inicial,count(carta_inicial) as 'usos',ROW_NUMBER() OVER (PARTITION BY idparticipante) AS Primera_carta from turnos group by idparticipante,carta_inicial)SELECT * FROM MyRowSet WHERE Primera_carta = 1;",
+        "select * from turnos;",
+        "select count(t.idturnos) as 'contador', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida where t.puntos_inicio-t.puntos_final < 0 and es_banca=1 group by idpartida;"]
+    outfileName = "Resultadoquery.xml"
+    with open(outfileName, "w") as outfile:
+        outfile.write('<?xml version="1.0" ?>\n')
+        outfile.write('<mydata>\n')
+        print("Informe sobre las partidas")
+        db = pymysql.connect(conexion, usuario, password, BBDD)
+        cursor = db.cursor()
+
+        for i in query_sql:
+            cursor.execute(i)
+            rows = cursor.fetchall()
+            outfile.write('  <query>\n')
+            for row in rows:
+                outfile.write('    <row>\n')
+                for index in range(len(row)):
+                    outfile.write('       <{}>{}</{}>\n'.format(cursor.description[index][0], row[index],
+                                                                cursor.description[index][0]))
+                outfile.write('\n    </row>\n')
+            outfile.write('  </query>\n')
+        outfile.write('</mydata>\n')
+        outfile.close()
+    db.close()
+
+
+
+
+    flag_menu_querys=False
+    while not flag_menu_querys:
+        while True:
+            try:
+                opt_menu_querys=int(input("\n1) Mostrar la Carta inicial más repetida por cada jugador(mostrar nombre jugador y carta)"
+                                          "\n2) Jugador que realiza la apuesta más alta por partida. (Mostrar nombre jugador)"
+                                          "\n3) Jugador que realiza apuesta más baja por partida. (Mostrar nombre jugador)"
+                                          "\n4) Ratio  de turnos ganados por jugador en cada partida (%),mostrar columna Nombre jugador, Nombre partida, nueva columna 'porcentaje %'"
+                                          "\n5) Porcentaje de partidas ganadas Bots en general. Nueva columna 'porcentaje %'"
+                                          "\n6) Mostrar los datos de los jugadores y el tiempo que han durado sus partidas ganadas cuya puntuación obtenida es mayor que la media puntos de las partidas ganadas totales"
+                                          "\n7) Cuántas rondas se ganan en cada partida según el palo"
+                                          "\n8) Cuantas rondas gana la banca en cada partida"
+                                          "\n9) Cuántos usuarios han sido la banca en cada partida"
+                                          "\n10) Partida con la puntuación más alta final de todos los jugadores, mostrar nombre jugador, nombre partida,así como añadir una columna nueva en la que diga si ha ganado la partida o no"
+                                          "\n11) Calcular la apuesta media por partida"
+                                          "\n12) Mostrar los datos de los usuarios que no son bot, así como cual ha sido su última apuesta en cada partida que ha jugado"
+                                          "\n13) Calcular el valor total de las cartas y el numero total de cartas que se han dado inicialmente en las manos en la partida"
+                                          "\n14) Diferencia de puntos de los participantes de las partidas entre la ronda 1 y 5"
+                                          "\n15) Salir"
+                                          "\nEscoje una quety: "))
+
+            except:
+                print("Tiene que ser un numero")
+            else:
+                break
+
+        if opt_menu_querys!=15:
+
+            tree=et.parse('Resultadoquery.xml')
+            root=tree.getroot()
+            count=0
+
+            for child in root:
+                count+=1
+                if count==opt_menu_querys:
+                    for row in child:
+                        for j in row:
+                            print(f"{j.tag}".rjust(17), end="")
+                        break
+                    print()
+                    for row in child:
+                        for j in row:
+                            print(f"{j.text}".rjust(17),end="")
+                        print()
+        elif opt_menu_querys==15:
+            break
+        else:
+            print("opcion incorrecta.")
 
 '''
 for i in jugadores.keys():
