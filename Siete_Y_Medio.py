@@ -1,6 +1,7 @@
 
 import random
 import xml.etree.ElementTree as et
+from xml.dom import minidom
 
 flag_menu1=False
 flag_ganador=False
@@ -9,6 +10,8 @@ mazo=[]
 mazo_backup=[]
 
 jugadores={}
+
+orden=[("Oros",1),("Copas",2),("Espadas",3),("Bastos",4)]
 
 class bcolors:
     HEADER = '\033[95m'
@@ -114,7 +117,7 @@ def robar_ia(i):
                       jugadores[i]['puntos mano'],
                       "puntos del mazo")
                 if jugadores[i]['puntos mano'] > 7.5:
-                    print("Te has pasado.")
+                    print(f"{bcolors.FAIL}Te has pasado.{bcolors.ENDC}")
                     jugadores[i]['estado mano'] = "plantado"
                     break
             else:
@@ -133,7 +136,7 @@ def robar_ia(i):
                 sum_mazo()
                 print("\tTe toco", jugadores[i]['mano'][0][2], "de", jugadores[i]['mano'][0][1], "y",jugadores[i]['puntos mano'],"puntos del mazo")
                 if jugadores[i]['puntos mano'] > 7.5:
-                    print("Te has pasado.")
+                    print(f"{bcolors.FAIL}Te has pasado.{bcolors.ENDC}")
                     jugadores[i]['estado mano'] = "plantado"
                     break
             else:
@@ -144,7 +147,6 @@ def apostar_ia(min,max):
     jugadores[i]['puntos apostados']=random_apostar
     jugadores[i]['puntos restantes']-=random_apostar
     print(f"{bcolors.UNDERLINE}{i}{bcolors.ENDC} a apostado: {bcolors.OKBLUE}{random_apostar}{bcolors.ENDC}")
-    print()
 
 while not flag_menu1:
     while True:
@@ -172,7 +174,12 @@ if mod_juego=="Manual" or mod_juego=="Maquina":
     if mod_juego=="Manual":
         while True:
             try:
-                num_jugadores = int(input("Cuantos Jugadores van a Jugar 2/8: "))
+                while True:
+                    num_jugadores = int(input("Cuantos Jugadores van a Jugar 2/8: "))
+                    if num_jugadores>max_players or num_jugadores<min_players:
+                        print("Numero de jugadores incorrecta.")
+                    else:
+                        break
             except:
                 print("Tiene que ser un numero")
             else:
@@ -180,7 +187,12 @@ if mod_juego=="Manual" or mod_juego=="Maquina":
     else:
         while True:
             try:
-                num_jugadores = int(input("Cuantos Jugadores van a Jugar 2/8: "))
+                while True:
+                    num_jugadores = int(input("Cuantos Jugadores van a Jugar 2/8: "))
+                    if num_jugadores>max_players or num_jugadores<min_players:
+                        print("Numero de jugadores incorrecta.")
+                    else:
+                        break
 
                 while True:
                     while True:
@@ -190,13 +202,10 @@ if mod_juego=="Manual" or mod_juego=="Maquina":
                             print("Tiene que ser un numero.")
                         else:
                             break
+                    print(num_jugadores, max_players,num_ia)
 
-                    if num_ia + num_jugadores > max_players:
-                        print("Demasiada IA")
-                    elif num_ia == 0:
+                    if num_ia == 0:
                         print("Tiene que haber minimo 1 ia.")
-                    elif num_ia>num_jugadores:
-                        print("No puede haber mas ia que total de jugadores.")
                     else:
                         break
 
@@ -278,6 +287,9 @@ if mod_juego=="Manual" or mod_juego=="Maquina":
                     jugadores[nombre]['ia']=1  # Si 0 es jugador, 1 si es ia
                     break
 
+    else:
+        print("Demasiados jugadores.")
+
     for i in jugadores.keys():
         carta_robada = random.choice(mazo)
         jugadores[i]['mano'].append(carta_robada)  # Primera repartida de Cartas
@@ -298,6 +310,17 @@ if mod_juego=="Manual" or mod_juego=="Maquina":
                 b = jugadores_ord[j + 1]
                 jugadores_ord[j] = b
                 jugadores_ord[j + 1] = a
+
+
+    count=1
+    for i in range(len(jugadores_ord)):
+
+        if count>1:
+            print(jugadores[jugadores_ord[i - 1][0]]['mano'][0][1],jugadores[jugadores_ord[i][0]]['mano'][0][1])
+            if jugadores[jugadores_ord[i][0]]['mano'][0][1]==jugadores[jugadores_ord[i-1][0]]['mano'][0][1]:
+                print("")
+
+        count+=1
 
     jugadores_ord = jugadores_ord[::-1]  # Le doy la vuelta a la lista para que quede en orden descendente de puntos
     banca = jugadores_ord[0][0]  # Escoje el jugador con mas puntos como la banca
