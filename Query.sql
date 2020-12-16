@@ -66,6 +66,11 @@ order by idpartida asc;
 -- 4 Ratio de turnos ganados por jugador en cada partida (%),mostrar columna Nombre jugador, Nombre partida, nueva columna "porcentaje %"
 
 -- 5 Porcentaje de partidas ganadas Bots en general. Nueva columna "porcentaje %"
+select distinct bot.descripcion,partida.ganador_partida, truncate(((2/sum(partida.idpartida))*100),2) as porcentaje from partida 
+inner join participante on partida.ganador_partida=participante.id_participante 
+inner join jugador on participante.id_jugador=jugador.idjugador 
+inner join bot on jugador.idbot=bot.idbot 
+where bot.idbot is not null;
 
 -- 6 Mostrar los datos de los jugadores y el tiempo que han durado sus partidas ganadas cuya puntuación obtenida es mayor que la media puntos de las partidas ganadas totales.
 

@@ -106,6 +106,12 @@
   <query>
   </query>
   <query>
+    <row>
+       <descripcion>BotBeige</descripcion>
+       <ganador_partida>6</ganador_partida>
+       <porcentaje>40.00</porcentaje>
+
+    </row>
   </query>
   <query>
   </query>
