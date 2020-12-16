@@ -12,7 +12,7 @@ mazo_backup=[]
 
 jugadores={}
 
-class bcolors:
+class bcolors:              #  Colores
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'
@@ -210,10 +210,8 @@ while not flag_menu1:
                             print("Toda Ia no permitido.")
                         elif num_ia>num_jugadores:
                             print("No puede haber mas ia que jugadores totales")
-
                         else:
                             break
-
                 except:
                     print("Tiene que ser un numero")
                 else:
@@ -293,8 +291,7 @@ while not flag_menu1:
                         jugadores[nombre]['ia']=1  # Si 0 es jugador, 1 si es ia
                         break
 
-        else:
-            print("Demasiados jugadores.")
+
 
         for i in jugadores.keys():
             carta_robada = random.choice(mazo)
@@ -316,12 +313,10 @@ while not flag_menu1:
                     b = jugadores_ord[j + 1]
                     jugadores_ord[j] = b
                     jugadores_ord[j + 1] = a
-        print(jugadores_ord)
         count=1
         for i in range(len(jugadores_ord)):
 
             if count>1:
-                print(jugadores[jugadores_ord[i - 1][0]]['mano'][0][2],jugadores[jugadores_ord[i][0]]['mano'][0][2])
                 if jugadores[jugadores_ord[i][0]]['mano'][0][2]==jugadores[jugadores_ord[i-1][0]]['mano'][0][2]:
 
                     prioridadj1=0
@@ -352,7 +347,6 @@ while not flag_menu1:
                         jugadores_ord[i-1]=aux
             count+=1
 
-        print(jugadores_ord)
         jugadores_ord = jugadores_ord[::-1]  # Le doy la vuelta a la lista para que quede en orden descendente de puntos
         banca = jugadores_ord[0][0]  # Escoje el jugador con mas puntos como la banca
         print("La banca es:", banca)
@@ -516,7 +510,7 @@ while not flag_menu1:
                         jugadores[i]['puntos mano']=0
 
 
-            if jugadores[jugadores_ord[-1][0]]['puntos mano']>7.5:  # Si se pasa, paga a todos los plantados
+            if jugadores[jugadores_ord[-1][0]]['puntos mano']>7.5:  # Si la banca se pasa, paga a todos los plantados
                 for i in jugadores_ord[:-1]:
                     i=i[0]
                     jugadores[i]['puntos restantes']  # Duda. Sin acabar
@@ -587,7 +581,6 @@ while not flag_menu1:
                     print(i,"a pagado",jugadores[i]['puntos apostados'],"a la banca (",jugadores_ord[-1][0],")")
 
             if jugadores[jugadores_ord[-1][0]]['puntos mano']!=7.5 and sieteymedio_comprobacion:
-                # [(carlos,4),(nil,7.5),(marti,6),(aida,7)]
                 jugadores_ord.remove(jugador_a_banca)
                 jugadores_ord.append(jugador_a_banca)
 
