@@ -524,7 +524,7 @@ while not flag_menu1:
                     if jugadores[jugadores_ord[-1]]['puntos restantes']<jugadores[i]['puntos apostados']*2:
                         jugadores[i]['puntos restantes']+=jugadores[jugadores_ord[-1]]['puntos restantes']
                     else:
-                        jugadores[jugadores_ord[-1]]['puntos restantes']-=jugadores[i]['puntos apostados']*2
+                        jugadores[jugadores_ord[-1][0]]['puntos restantes']-=jugadores[i]['puntos apostados']*2
                     print(i,"a ganado:",jugadores[i]['puntos apostados']*3,"puntos, ahora tiene:",jugadores[i]['puntos restantes'])
 
             if not sieteymedio and num_jugadores>2:  # Nadie a sacado 7.5
