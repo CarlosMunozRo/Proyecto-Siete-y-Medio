@@ -12,8 +12,6 @@ mazo_backup=[]
 
 jugadores={}
 
-orden=[("Oros",1),("Copas",2),("Espadas",3),("Bastos",4)]
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -168,6 +166,7 @@ while not flag_menu1:
         mod_juego=""
         flag_menu1=True
     else:
+        mod_juego = ""
         print("Opcion incorrecta")
 
     if mod_juego=="Manual" or mod_juego=="Maquina":
@@ -207,6 +206,11 @@ while not flag_menu1:
 
                         if num_ia == 0:
                             print("Tiene que haber minimo 1 ia.")
+                        elif num_ia==num_jugadores and allow_auto=="NO":
+                            print("Toda Ia no permitido.")
+                        elif num_ia>num_jugadores:
+                            print("No puede haber mas ia que jugadores totales")
+
                         else:
                             break
 
@@ -226,6 +230,7 @@ while not flag_menu1:
                             print("Entrada invalida")
                         else:
                             break
+
                     if not nombre.isalnum() or not nombre[0].isalpha() or ' ' in nombre:  # Comprueba si el nombre es aceptable
                         print("Nombre no permitido")
                     else:
@@ -311,17 +316,43 @@ while not flag_menu1:
                     b = jugadores_ord[j + 1]
                     jugadores_ord[j] = b
                     jugadores_ord[j + 1] = a
-
+        print(jugadores_ord)
         count=1
         for i in range(len(jugadores_ord)):
 
             if count>1:
-                print(jugadores[jugadores_ord[i - 1][0]]['mano'][0][1],jugadores[jugadores_ord[i][0]]['mano'][0][1])
-                if jugadores[jugadores_ord[i][0]]['mano'][0][1]==jugadores[jugadores_ord[i-1][0]]['mano'][0][1]:
-                    print("")
+                print(jugadores[jugadores_ord[i - 1][0]]['mano'][0][2],jugadores[jugadores_ord[i][0]]['mano'][0][2])
+                if jugadores[jugadores_ord[i][0]]['mano'][0][2]==jugadores[jugadores_ord[i-1][0]]['mano'][0][2]:
 
+                    prioridadj1=0
+                    prioridadj2=0
+
+                    if jugadores[jugadores_ord[i][0]]['mano'][0][1]=="Oros":
+                        prioridadj1=4
+                    elif jugadores[jugadores_ord[i][0]]['mano'][0][1]=="Copas":
+                        prioridadj1=3
+                    elif jugadores[jugadores_ord[i][0]]['mano'][0][1]=="Espadas":
+                        prioridadj1=2
+                    elif jugadores[jugadores_ord[i][0]]['mano'][0][1]=="Bastos":
+                        prioridadj1=1
+
+                    if jugadores[jugadores_ord[i-1][0]]['mano'][0][1]=="Oros":
+                        prioridadj2=4
+                    elif jugadores[jugadores_ord[i-1][0]]['mano'][0][1]=="Copas":
+                        prioridadj2=3
+                    elif jugadores[jugadores_ord[i-1][0]]['mano'][0][1]=="Espadas":
+                        prioridadj2=2
+                    elif jugadores[jugadores_ord[i-1][0]]['mano'][0][1]=="Bastos":
+                        prioridadj2=1
+
+                    if prioridadj1>prioridadj2:
+                        aux=jugadores_ord[i]
+                        aux2=jugadores_ord[i-1]
+                        jugadores_ord[i]=aux2
+                        jugadores_ord[i-1]=aux
             count+=1
 
+        print(jugadores_ord)
         jugadores_ord = jugadores_ord[::-1]  # Le doy la vuelta a la lista para que quede en orden descendente de puntos
         banca = jugadores_ord[0][0]  # Escoje el jugador con mas puntos como la banca
         print("La banca es:", banca)
@@ -593,18 +624,22 @@ while not flag_menu1:
         password = "Alumne1234"
         BBDD = "proyecto"
         db = pymysql.connect(conexion, usuario, password, BBDD)
-        #  Falta 4 5 6 7 10 12 14
+        #  Falta 4 5 6 7 10
         query_sql = [
-            "WITH MyRowSet AS (select idparticipante,carta_inicial,count(carta_inicial) as 'usos',ROW_NUMBER() OVER (PARTITION BY idparticipante) AS Primera_carta from turnos group by idparticipante,carta_inicial)SELECT * FROM MyRowSet WHERE Primera_carta = 1;",
-            "select nombre as 'Nombre_del_jugador',max(apuesta) as 'Apuesta_maxima',idpartida as 'Partida' from (select usuario.username as nombre,max(turnos.apuesta) as apuesta,partida.idpartida as idpartida from usuario inner join jugador on usuario.idusuario=jugador.idusuario inner join participante on jugador.idjugador=participante.id_jugador inner join turnos on participante.id_participante=turnos.idparticipante inner join partida on turnos.idpartida=partida.idpartida where turnos.apuesta is not null group by partida.idpartida,username ) tabla where apuesta in( select max(turnos.apuesta) 'Apuesta más alta' from usuario inner join jugador on usuario.idusuario=jugador.idusuario inner join participante on jugador.idjugador=participante.id_jugador inner join turnos on participante.id_participante=turnos.idparticipante inner join partida on turnos.idpartida=partida.idpartida where turnos.apuesta is not null group by partida.idpartida order by partida.idpartida asc) group by idpartida order by idpartida asc;",
-            "select nombre,min(apuesta) as 'min_apuesta',idpartida from(select usuario.username as nombre,min(turnos.apuesta) as apuesta,partida.idpartida as idpartida from usuario inner join jugador on usuario.idusuario=jugador.idusuario inner join participante on jugador.idjugador=participante.id_jugador inner join turnos on participante.id_participante=turnos.idparticipante inner join partida on turnos.idpartida=partida.idpartida where turnos.apuesta is not null group by partida.idpartida,username ) tabla where apuesta in( select min(turnos.apuesta) 'Apuesta más alta' from usuario inner join jugador on usuario.idusuario=jugador.idusuario inner join participante on jugador.idjugador=participante.id_jugador inner join turnos on participante.id_participante=turnos.idparticipante inner join partida on turnos.idpartida=partida.idpartida where turnos.apuesta is not null group by partida.idpartida order by partida.idpartida asc) group by idpartida order by idpartida asc;",
-
-            "select count(t.idturnos) as 'Contador_Turnos', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida where t.puntos_inicio-t.puntos_final < 0 and es_banca=1 group by idpartida;",
-            "select count(es_banca) as 'Banca', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida where es_banca=1 group by idpartida;",
-
-            "select avg(t.apuesta) as 'Media_de_las_apuestas', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida group by idpartida;",
-
-            "select count(t.carta_inicial) as 'Numero_de_cartas_iniciales', sum((select valor from cartas where idcartas = t.carta_inicial)) as  'Valor_de_las_cartas', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida group by idpartida;"
+            "/*1*/WITH MyRowSet AS (select idparticipante,carta_inicial,count(carta_inicial) as 'usos',ROW_NUMBER() OVER (PARTITION BY idparticipante) AS Primera_carta from turnos group by idparticipante,carta_inicial)SELECT * FROM MyRowSet WHERE Primera_carta = 1;",
+            "/*2*/select nombre as 'Nombre_del_jugador',max(apuesta) as 'Apuesta_maxima',idpartida as 'Partida' from (select usuario.username as nombre,max(turnos.apuesta) as apuesta,partida.idpartida as idpartida from usuario inner join jugador on usuario.idusuario=jugador.idusuario inner join participante on jugador.idjugador=participante.id_jugador inner join turnos on participante.id_participante=turnos.idparticipante inner join partida on turnos.idpartida=partida.idpartida where turnos.apuesta is not null group by partida.idpartida,username ) tabla where apuesta in( select max(turnos.apuesta) 'Apuesta más alta' from usuario inner join jugador on usuario.idusuario=jugador.idusuario inner join participante on jugador.idjugador=participante.id_jugador inner join turnos on participante.id_participante=turnos.idparticipante inner join partida on turnos.idpartida=partida.idpartida where turnos.apuesta is not null group by partida.idpartida order by partida.idpartida asc) group by idpartida order by idpartida asc;",
+            "/*3*/select nombre,min(apuesta) as 'min_apuesta',idpartida from(select usuario.username as nombre,min(turnos.apuesta) as apuesta,partida.idpartida as idpartida from usuario inner join jugador on usuario.idusuario=jugador.idusuario inner join participante on jugador.idjugador=participante.id_jugador inner join turnos on participante.id_participante=turnos.idparticipante inner join partida on turnos.idpartida=partida.idpartida where turnos.apuesta is not null group by partida.idpartida,username ) tabla where apuesta in( select min(turnos.apuesta) 'Apuesta más alta' from usuario inner join jugador on usuario.idusuario=jugador.idusuario inner join participante on jugador.idjugador=participante.id_jugador inner join turnos on participante.id_participante=turnos.idparticipante inner join partida on turnos.idpartida=partida.idpartida where turnos.apuesta is not null group by partida.idpartida order by partida.idpartida asc) group by idpartida order by idpartida asc;",
+            "/*4*/",
+            "/*5*/",
+            "/*6*/",
+            "/*7*/",
+            "/*8*/select count(t.idturnos) as 'Contador_Turnos', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida where t.puntos_inicio-t.puntos_final < 0 and es_banca=1 group by idpartida;",
+            "/*9*/select count(es_banca) as 'Banca', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida where es_banca=1 group by idpartida;",
+            "/*10*/",
+            "/*11*/select avg(t.apuesta) as 'Media_de_las_apuestas', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida group by idpartida;",
+            "/*12*/select distinct u.*,apuesta , max(t.numero_turno) as 'Max_num_turno', pd.idpartida from usuario u inner join jugador j on u.idusuario = j.idusuario inner join participante p on j.idjugador = p.id_jugador inner join turnos t on p.id_participante = t.idparticipante inner join partida pd on pd.idpartida = t.idpartida group by idpartida,idparticipante -- having numero_turno in  (select max(numero_turno) from turnos group by idpartida) order by t.idpartida asc,idparticipante asc, numero_turno asc;",
+            "/*13*/select count(t.carta_inicial) as 'Numero_de_cartas_iniciales', sum((select valor from cartas where idcartas = t.carta_inicial)) as  'Valor_de_las_cartas', p.idpartida from turnos t inner join partida p on p.idpartida = t.idpartida group by idpartida;",
+            "/*14*/SELECT t.idpartida, u.username,(select distinct puntos_inicio from turnos where numero_turno=1) as 'Puntos_ronda_1',puntos_final, puntos_final-20 AS 'Difference' from usuario u inner join jugador j on u.idusuario = j.idusuario inner join participante p on j.idjugador = p.id_jugador inner join turnos t on p.id_participante = t.idparticipante where numero_turno=5 group by t.idpartida, t.idparticipante order by t.idpartida asc, t.idparticipante asc;"
             ]
         outfileName = "Resultadoquery.xml"
         with open(outfileName, "w") as outfile:
@@ -653,7 +688,7 @@ while not flag_menu1:
                                               "\n13) Calcular el valor total de las cartas y el numero total de cartas que se han dado inicialmente en las manos en la partida"
                                               "\n14) Diferencia de puntos de los participantes de las partidas entre la ronda 1 y 5"
                                               "\n15) Salir"
-                                              "\nEscoje una quety: "))
+                                              "\nEscoje una query: "))
 
                 except:
                     print("Tiene que ser un numero")
