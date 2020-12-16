@@ -569,7 +569,7 @@ while not flag_menu1:
 
             for i in jugadores_ord[:-1]:  # Quien a perdido contra la Banca
                 i = i[0]
-                if jugadores[jugadores_ord[-1][0]]['puntos mano']<jugadores[i]['puntos mano'] and jugadores[i]['estado mano']=="plantado":  # Si la banca pierde
+                if jugadores[jugadores_ord[-1][0]]['puntos mano']<jugadores[i]['puntos mano'] and jugadores[i]['estado mano']=="plantado" or jugadores[jugadores_ord[-1][0]]['estado mano']=="eliminado":  # Si la banca pierde
 
                     if jugadores[i]['puntos mano']==7.5:  # Si saca 7.5
 
