@@ -4,13 +4,13 @@
 Desarrollo del juego de cartas Siete y Medio
 
 
-Instrucciones de instalacion:
+Instrucciones de instalacion:<br>
   pip3 install pymysql
   
- Autores:
-  carmuny54@gmail.com
-  aabellansole.cf@iesesteveterradas.cat
-  Nilbarrosorubio@gmail.con
+ Autores::<br>
+  carmuny54@gmail.com:<br>
+  aabellansole.cf@iesesteveterradas.cat:<br>
+  Nilbarrosorubio@gmail.con:<br>
   
   
   
