@@ -1,0 +1,415 @@
+<?xml version="1.0" ?>
+<mydata>
+  <query>
+    <row>
+       <idparticipante>1</idparticipante>
+       <carta_inicial>3</carta_inicial>
+       <usos>4</usos>
+       <Primera_carta>1</Primera_carta>
+
+    </row>
+    <row>
+       <idparticipante>2</idparticipante>
+       <carta_inicial>5</carta_inicial>
+       <usos>2</usos>
+       <Primera_carta>1</Primera_carta>
+
+    </row>
+    <row>
+       <idparticipante>3</idparticipante>
+       <carta_inicial>2</carta_inicial>
+       <usos>3</usos>
+       <Primera_carta>1</Primera_carta>
+
+    </row>
+    <row>
+       <idparticipante>4</idparticipante>
+       <carta_inicial>4</carta_inicial>
+       <usos>2</usos>
+       <Primera_carta>1</Primera_carta>
+
+    </row>
+    <row>
+       <idparticipante>5</idparticipante>
+       <carta_inicial>38</carta_inicial>
+       <usos>1</usos>
+       <Primera_carta>1</Primera_carta>
+
+    </row>
+    <row>
+       <idparticipante>6</idparticipante>
+       <carta_inicial>18</carta_inicial>
+       <usos>1</usos>
+       <Primera_carta>1</Primera_carta>
+
+    </row>
+    <row>
+       <idparticipante>7</idparticipante>
+       <carta_inicial>14</carta_inicial>
+       <usos>1</usos>
+       <Primera_carta>1</Primera_carta>
+
+    </row>
+  </query>
+  <query>
+    <row>
+       <Nombre_del_jugador>Belen</Nombre_del_jugador>
+       <Apuesta_maxima>17.00</Apuesta_maxima>
+       <Partida>1</Partida>
+
+    </row>
+    <row>
+       <Nombre_del_jugador>Jordi</Nombre_del_jugador>
+       <Apuesta_maxima>5.00</Apuesta_maxima>
+       <Partida>2</Partida>
+
+    </row>
+    <row>
+       <Nombre_del_jugador>Rafa</Nombre_del_jugador>
+       <Apuesta_maxima>2.00</Apuesta_maxima>
+       <Partida>4</Partida>
+
+    </row>
+    <row>
+       <Nombre_del_jugador>Rafa</Nombre_del_jugador>
+       <Apuesta_maxima>2.00</Apuesta_maxima>
+       <Partida>5</Partida>
+
+    </row>
+  </query>
+  <query>
+    <row>
+       <nombre>Rafa</nombre>
+       <min_apuesta>2.00</min_apuesta>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <nombre>Jordi</nombre>
+       <min_apuesta>1.00</min_apuesta>
+       <idpartida>2</idpartida>
+
+    </row>
+    <row>
+       <nombre>Rafa</nombre>
+       <min_apuesta>1.00</min_apuesta>
+       <idpartida>4</idpartida>
+
+    </row>
+    <row>
+       <nombre>Rafa</nombre>
+       <min_apuesta>1.00</min_apuesta>
+       <idpartida>5</idpartida>
+
+    </row>
+  </query>
+  <query>
+  </query>
+  <query>
+  </query>
+  <query>
+  </query>
+  <query>
+  </query>
+  <query>
+    <row>
+       <Contador_Turnos>5</Contador_Turnos>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <Contador_Turnos>13</Contador_Turnos>
+       <idpartida>2</idpartida>
+
+    </row>
+    <row>
+       <Contador_Turnos>16</Contador_Turnos>
+       <idpartida>3</idpartida>
+
+    </row>
+    <row>
+       <Contador_Turnos>16</Contador_Turnos>
+       <idpartida>4</idpartida>
+
+    </row>
+    <row>
+       <Contador_Turnos>16</Contador_Turnos>
+       <idpartida>5</idpartida>
+
+    </row>
+  </query>
+  <query>
+    <row>
+       <Banca>6</Banca>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <Banca>19</Banca>
+       <idpartida>2</idpartida>
+
+    </row>
+    <row>
+       <Banca>16</Banca>
+       <idpartida>3</idpartida>
+
+    </row>
+    <row>
+       <Banca>16</Banca>
+       <idpartida>4</idpartida>
+
+    </row>
+    <row>
+       <Banca>16</Banca>
+       <idpartida>5</idpartida>
+
+    </row>
+  </query>
+  <query>
+  </query>
+  <query>
+    <row>
+       <Media_de_las_apuestas>6.312500</Media_de_las_apuestas>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <Media_de_las_apuestas>3.027027</Media_de_las_apuestas>
+       <idpartida>2</idpartida>
+
+    </row>
+    <row>
+       <Media_de_las_apuestas>1.250000</Media_de_las_apuestas>
+       <idpartida>3</idpartida>
+
+    </row>
+    <row>
+       <Media_de_las_apuestas>1.250000</Media_de_las_apuestas>
+       <idpartida>4</idpartida>
+
+    </row>
+    <row>
+       <Media_de_las_apuestas>1.250000</Media_de_las_apuestas>
+       <idpartida>5</idpartida>
+
+    </row>
+  </query>
+  <query>
+    <row>
+       <idusuario>1</idusuario>
+       <username>Rafa</username>
+       <password>qwerty</password>
+       <email>rafa@gmail.com</email>
+       <apuesta>1.00</apuesta>
+       <Max_num_turno>17</Max_num_turno>
+       <idpartida>4</idpartida>
+
+    </row>
+    <row>
+       <idusuario>1</idusuario>
+       <username>Rafa</username>
+       <password>qwerty</password>
+       <email>rafa@gmail.com</email>
+       <apuesta>1.00</apuesta>
+       <Max_num_turno>17</Max_num_turno>
+       <idpartida>5</idpartida>
+
+    </row>
+    <row>
+       <idusuario>1</idusuario>
+       <username>Rafa</username>
+       <password>qwerty</password>
+       <email>rafa@gmail.com</email>
+       <apuesta>2.00</apuesta>
+       <Max_num_turno>6</Max_num_turno>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <idusuario>2</idusuario>
+       <username>Jenni</username>
+       <password>asdfg</password>
+       <email>jenni@gmail.com</email>
+       <apuesta>2.00</apuesta>
+       <Max_num_turno>6</Max_num_turno>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <idusuario>3</idusuario>
+       <username>Leandro</username>
+       <password>qazxww</password>
+       <email>lean@gmail.com</email>
+       <apuesta>None</apuesta>
+       <Max_num_turno>17</Max_num_turno>
+       <idpartida>4</idpartida>
+
+    </row>
+    <row>
+       <idusuario>3</idusuario>
+       <username>Leandro</username>
+       <password>qazxww</password>
+       <email>lean@gmail.com</email>
+       <apuesta>None</apuesta>
+       <Max_num_turno>17</Max_num_turno>
+       <idpartida>5</idpartida>
+
+    </row>
+    <row>
+       <idusuario>3</idusuario>
+       <username>Leandro</username>
+       <password>qazxww</password>
+       <email>lean@gmail.com</email>
+       <apuesta>2.00</apuesta>
+       <Max_num_turno>4</Max_num_turno>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <idusuario>4</idusuario>
+       <username>Belen</username>
+       <password>wsxzaq</password>
+       <email>mbelen@gmail.com</email>
+       <apuesta>None</apuesta>
+       <Max_num_turno>5</Max_num_turno>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <idusuario>6</idusuario>
+       <username>Jordi</username>
+       <password>tgbvfr</password>
+       <email>jorge@gmail.com</email>
+       <apuesta>None</apuesta>
+       <Max_num_turno>17</Max_num_turno>
+       <idpartida>3</idpartida>
+
+    </row>
+    <row>
+       <idusuario>6</idusuario>
+       <username>Jordi</username>
+       <password>tgbvfr</password>
+       <email>jorge@gmail.com</email>
+       <apuesta>3.00</apuesta>
+       <Max_num_turno>19</Max_num_turno>
+       <idpartida>2</idpartida>
+
+    </row>
+    <row>
+       <idusuario>6</idusuario>
+       <username>Jordi</username>
+       <password>tgbvfr</password>
+       <email>jorge@gmail.com</email>
+       <apuesta>5.00</apuesta>
+       <Max_num_turno>6</Max_num_turno>
+       <idpartida>1</idpartida>
+
+    </row>
+  </query>
+  <query>
+    <row>
+       <Numero_de_cartas_iniciales>22</Numero_de_cartas_iniciales>
+       <Valor_de_las_cartas>66.00</Valor_de_las_cartas>
+       <idpartida>1</idpartida>
+
+    </row>
+    <row>
+       <Numero_de_cartas_iniciales>56</Numero_de_cartas_iniciales>
+       <Valor_de_las_cartas>151.00</Valor_de_las_cartas>
+       <idpartida>2</idpartida>
+
+    </row>
+    <row>
+       <Numero_de_cartas_iniciales>32</Numero_de_cartas_iniciales>
+       <Valor_de_las_cartas>87.00</Valor_de_las_cartas>
+       <idpartida>3</idpartida>
+
+    </row>
+    <row>
+       <Numero_de_cartas_iniciales>32</Numero_de_cartas_iniciales>
+       <Valor_de_las_cartas>89.00</Valor_de_las_cartas>
+       <idpartida>4</idpartida>
+
+    </row>
+    <row>
+       <Numero_de_cartas_iniciales>32</Numero_de_cartas_iniciales>
+       <Valor_de_las_cartas>86.00</Valor_de_las_cartas>
+       <idpartida>5</idpartida>
+
+    </row>
+  </query>
+  <query>
+    <row>
+       <idpartida>1</idpartida>
+       <username>Rafa</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>6.00</puntos_final>
+       <Difference>-14.00</Difference>
+
+    </row>
+    <row>
+       <idpartida>1</idpartida>
+       <username>Jenni</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>83.00</puntos_final>
+       <Difference>63.00</Difference>
+
+    </row>
+    <row>
+       <idpartida>1</idpartida>
+       <username>Belen</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>0.00</puntos_final>
+       <Difference>-20.00</Difference>
+
+    </row>
+    <row>
+       <idpartida>2</idpartida>
+       <username>Jordi</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>22.00</puntos_final>
+       <Difference>2.00</Difference>
+
+    </row>
+    <row>
+       <idpartida>3</idpartida>
+       <username>Jordi</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>25.00</puntos_final>
+       <Difference>5.00</Difference>
+
+    </row>
+    <row>
+       <idpartida>4</idpartida>
+       <username>Rafa</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>15.00</puntos_final>
+       <Difference>-5.00</Difference>
+
+    </row>
+    <row>
+       <idpartida>4</idpartida>
+       <username>Leandro</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>25.00</puntos_final>
+       <Difference>5.00</Difference>
+
+    </row>
+    <row>
+       <idpartida>5</idpartida>
+       <username>Rafa</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>15.00</puntos_final>
+       <Difference>-5.00</Difference>
+
+    </row>
+    <row>
+       <idpartida>5</idpartida>
+       <username>Leandro</username>
+       <Puntos_ronda_1>20.00</Puntos_ronda_1>
+       <puntos_final>25.00</puntos_final>
+       <Difference>5.00</Difference>
+
+    </row>
+  </query>
+</mydata>
