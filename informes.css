@@ -56,7 +56,10 @@ table{
 	margin: auto;
 	width: 200px;
 	height: 200px;
+<<<<<<< HEAD
+=======
 	vertical-align: middle;
+>>>>>>> nil
 }
 td, tr{
 	text-align: center;
