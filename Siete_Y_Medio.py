@@ -202,7 +202,6 @@ while not flag_menu1:
                                 print("Tiene que ser un numero.")
                             else:
                                 break
-                        print(num_jugadores, max_players,num_ia)
 
                         if num_ia == 0:
                             print("Tiene que haber minimo 1 ia.")
