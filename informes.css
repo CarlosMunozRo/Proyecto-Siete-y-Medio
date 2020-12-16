@@ -1,10 +1,11 @@
 .contenedor{
-	height: 300px;
+	height: auto;
 	width: 500px;
 	border: solid red;
 	border-radius: 20px;
 	background-color: orange;
 	margin: auto;
+    padding: 10px;
 }
 
 .titulo{
@@ -50,4 +51,13 @@
     font-weight: bolder;
     text-align: center;
     font-size: 30px;
+}
+table{
+	margin: auto;
+	width: 200px;
+	height: 200px;
+	vertical-align: middle;
+}
+td, tr{
+	text-align: center;
 }
